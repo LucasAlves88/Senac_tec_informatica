@@ -1,0 +1,352 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <title>Exercícios Avançados: Regras de Negócio e Entidades</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <style>
+    body { font-family: Arial, sans-serif; background: #f4f6fa; color: #222; margin:0; }
+    main { max-width: 1000px; margin: 2rem auto; background: #fff; border-radius: 10px; box-shadow: 0 3px 20px #0002; padding:2rem 2.5rem; }
+    h1 { color: #005bac; }
+    .bloco { border:2px solid #005bac33; border-radius:8px; background: #f7faff; margin-bottom: 2.5rem; padding: 1.2rem; }
+    .bloco h2 { color:#005bac; margin-top:0; }
+    textarea, input[type="text"] { width:100%; padding:.5rem; font-size:1rem; border:1px solid #ccc; border-radius:4px; margin-bottom:1rem;}
+    textarea { resize:vertical; }
+    button { padding:.44rem 1.1rem; background: #005BAC; color:#fff; border: none; border-radius:5px; font-size:1rem; cursor:pointer; }
+    button:hover { background: #003e73; }
+    .gabarito-hidden { display: none; }
+    .gabarito { background:#eafdea; border-left: 4px solid #21964f; color:#184a2e; margin:1.3rem 0 .3rem 0; border-radius:5px; padding:1rem; }
+    .gabarito strong { color:#005BAC; }
+    .perguntas p { margin:0.6rem 0; }
+    @media(max-width:700px) {
+      main { padding: 0.5rem; }
+      .bloco { padding:.85rem; }
+    }
+  </style>
+</head>
+<body>
+<main>
+
+  <h1>Como Identificar Entidades no Banco de Dados</h1>
+    <p>Ao modelar um banco de dados, é comum surgir a dúvida: <strong>essa regra de negócio deve virar uma entidade?</strong> Para ajudar a entender esse processo, usamos três testes didáticos que correspondem às perguntas clássicas da modelagem de dados.</p>
+
+    <ul>
+        <li><strong>Teste dos Atributos:</strong> Verifica se a regra possui dados próprios que precisam ser armazenados.</li>
+        <li><strong>Teste da Persistência:</strong> Avalia se a regra representa algo que precisa ser guardado no banco por um tempo.</li>
+        <li><strong>Teste da Identificação:</strong> Checa se é possível identificar a regra com uma chave primária (PK) ou composta.</li>
+    </ul>
+
+    <h2>Perguntas Clássicas</h2>
+    <table>      
+        <tr class="highlight">
+            <td>Teste dos Atributos</td>
+            <td>A regra possui atributos próprios que precisam ser armazenados?</td>
+        </tr>
+        <tr>
+            <td>Teste da Persistência</td>
+            <td>A regra representa uma instância que precisa ser armazenada no banco por um tempo?</td>
+        </tr>
+        <tr class="highlight">
+            <td>Teste da Identificação</td>
+            <td>A regra pode ser identificada de forma única (PK ou chave composta)?</td>
+        </tr>
+    </table>
+
+  <h1>Exercícios - Regras de Negócio e Entidades</h1>
+  <p>
+    Leia atentamente cada contexto empresarial abaixo. Após tentar responder:
+    <ul>
+      <li><b>1.</b> Liste as REGRAS DE NEGÓCIO explícitas e inferidas do enunciado.</li>
+      <li><b>2.</b> Enumere quais ENTIDADES (ou relacionamento especial) você criaria para modelar o sistema descrito.</li>
+    </ul>
+    <p>Depois, clique em <b>“Mostrar Resposta”</b> para visualizar o gabarito. As questões sem gabarito vamos trabalhar em sala.</p>
+  </p>
+
+  <!-- Exercício 1 -->
+  <div class="bloco">
+    <h2>1. Plataforma de Eventos Culturais</h2>
+    <p>
+      A empresa “Cultura Acessível” organiza eventos presenciais e online. Cada evento é organizado por um ou mais produtores, mas sempre há um produtor principal que responde pela realização. Os participantes podem se inscrever em qualquer evento disponível, desde que as vagas não estejam esgotadas. Alguns eventos possuem limite de idade (por exemplo, apenas maiores de 18 anos) ou exigem que o participante tenha assistido a um evento anterior como pré-requisito.
+      Para eventos online, os ingressos não são nominais e o link de acesso pode ser compartilhado — mas isso reduz o número de certificados emitidos, já que o certificado é nominal e só é emitido para quem efetivamente assistir.
+      Eventos presenciais têm lugares numerados e cada ingresso está vinculado a um assento. O mesmo evento pode ocorrer em mais de uma data, e cada data tem seu próprio controle de ingressos.
+    </p>
+    <div class="perguntas">
+      <p><b>1.1</b> Enumere as regras de negócio explícitas e inferidas:</p>
+      <textarea rows="2" id="resp-rn-1" placeholder="Registre aqui as regras de negócio..."></textarea>
+      <p><b>1.2</b> Quais ENTIDADES você criaria para este sistema?</p>
+      <input type="text" id="resp-ent-1" placeholder="Exemplo: Evento, Produtor, Participante, ..." />
+    </div>
+    <button onclick="toggleGabarito('gab1')">Mostrar Resposta</button>
+    <div class="gabarito gabarito-hidden" id="gab1">
+      <strong>Regras explícitas</strong>
+      <ul>
+        <li>Um evento pode ter um ou mais produtores, mas existe um produtor principal.</li>
+        <li>Participante pode se inscrever (condicional à existência de vagas/disponibilidade).</li>
+        <li>Há eventos com limite de idade ou pré-requisito de participação anterior.</li>
+        <li>Eventos presenciais têm lugares numerados e cada ingresso é vinculado a um assento.</li>
+        <li>Um mesmo evento pode ocorrer em diferentes datas, cada data com controle próprio de ingressos.</li>
+      </ul>
+      <strong>Regras inferidas</strong>
+      <ul>
+        <li>Produtor principal → chave obrigatória na relação Evento–Produtor (tipo relacionamento com atributo).</li>
+        <li>Ingressos online não são nominais; controle de acesso é menos rigoroso.</li>
+        <li>Certificados online são apenas para quem participou/assistiu (logo, relacionamento Evento–Participante–Certificado depende de presença).</li>
+        <li>Controle de ingresso é sempre associado à "data" de realização (tabela/evento associativo Evento-Data).</li>
+      </ul>
+      <strong>Entidades sugeridas:</strong> <br>
+      Evento, Produtor, Participante, Ingresso, Assento, Certificado, DataEvento, PréRequisitoEvento
+    </div>
+  </div>
+
+  <!-- Exercício 2 -->
+  <div class="bloco">
+    <h2>2. Clínica de Especialidades Médicas</h2>
+    <p>
+      A clínica “Vida Plena” oferece consultas em diversas especialidades. Um médico pode atender em mais de uma especialidade, e cada consulta é vinculada a uma especialidade específica.
+      Os pacientes podem marcar mais de uma consulta no mesmo dia, desde que sejam com especialidades diferentes. Algumas especialidades exigem encaminhamento médico (por exemplo, cardiologia e neurologia).
+      Médicos podem atender em mais de um consultório e até em cidades diferentes. Um mesmo paciente pode ser atendido por diferentes médicos, e um médico pode atender vários pacientes, mas uma consulta sempre está vinculada a apenas um paciente e um médico.
+      Algumas consultas são cobertas pelo plano de saúde do paciente, mas outras precisam ser pagas no ato.
+    </p>
+    <div class="perguntas">
+      <p><b>2.1</b> Enumere as regras de negócio explícitas e inferidas:</p>
+      <textarea rows="2" id="resp-rn-2"></textarea>
+      <p><b>2.2</b> Quais ENTIDADES você criaria para este sistema?</p>
+      <input type="text" id="resp-ent-2" />
+    </div>
+    <button onclick="toggleGabarito('gab2')">Mostrar Resposta</button>
+    <div class="gabarito gabarito-hidden" id="gab2">
+      <strong>Regras explícitas</strong>
+      <ul>
+        <li>Médico pode atender em várias especialidades e lugares; consulta sempre com paciente+especialidade específica.</li>
+        <li>Paciente pode marcar várias consultas no mesmo dia, desde que sejam de especialidades diferentes.</li>
+        <li>Algumas especialidades requerem encaminhamento.</li>
+      </ul>
+      <strong>Regras inferidas</strong>
+      <ul>
+        <li>N:N entre Médico e Especialidade; Consultório/Lugar vira entidade separada.</li>
+        <li>Consulta tem FK para médico, paciente e especialidade, e campo/campo-relacionamento para plano de saúde.</li>
+        <li>Campo booleano ou entidade extra para "necessita encaminhamento".</li>
+      </ul>
+      <strong>Entidades sugeridas:</strong><br>
+      Paciente, Médico, Consulta, Especialidade, Consultório, Cidade, Encaminhamento, PlanoSaude
+    </div>
+  </div>
+
+  <!-- Exercício 3 -->
+  <div class="bloco">
+    <h2>3. Sistema de Locação de Equipamentos</h2>
+    <p>
+      A empresa “LocaTudo” aluga equipamentos para construção civil. Cada cliente pode alugar mais de um equipamento por contrato, e um mesmo equipamento pode ser alugado por diferentes clientes em datas diferentes.
+      Alguns equipamentos exigem que o cliente apresente certificado de operador.
+      Um contrato de aluguel pode conter equipamentos com prazos diferentes (ex: uma betoneira por 3 dias, um compactador por 7 dias).
+      A devolução antes do prazo não gera reembolso, mas atrasos geram multa diária. Há equipamentos que possuem limite de horas de uso por dia; ultrapassar esse limite também gera cobrança extra.
+    </p>
+    <div class="perguntas">
+      <p><b>3.1</b> Enumere as regras de negócio explícitas e inferidas:</p>
+      <textarea rows="2" id="resp-rn-3"></textarea>
+      <p><b>3.2</b> Quais ENTIDADES você criaria para este sistema?</p>
+      <input type="text" id="resp-ent-3" />
+    </div>
+    <!--button onclick="toggleGabarito('gab3')">Mostrar Resposta</button>
+    <div class="gabarito gabarito-hidden" id="gab3">
+      <strong>Regras explícitas</strong>
+      <ul>
+        <li>Cliente pode alugar vários equipamentos por contrato; equipamento pode ser alugado várias vezes.</li>
+        <li>Alguns exigem certificado do cliente.</li>
+        <li>Prazo pode ser variável entre equipamentos do mesmo contrato.</li>
+        <li>Devolução adiantada não reembolsa; atraso gera multa. Horas de uso extra geram cobrança extra.</li>
+      </ul>
+      <strong>Regras inferidas</strong>
+      <ul>
+        <li>Contrato-Equipamento é uma tabela associativa com início, fim, horas/dia e controle de certificado.</li>
+        <li>Multa exige cálculo automático comparando datas.</li>
+      </ul>
+      <strong>Entidades sugeridas:</strong><br>
+      Cliente, Contrato, Equipamento, CertificadoOperador, Aluguel/Disposição, RegistroUso, Multa
+    </div>
+  </div-->
+</div>
+  <!-- Exercício 4 -->
+  <div class="bloco">
+    <h2>4. Academia de Treinamento Personalizado</h2>
+    <p>
+      A academia “Corpo em Foco” oferece planos que podem incluir musculação, pilates, spinning e natação. O aluno escolhe quais modalidades vai praticar no momento da matrícula, mas pode adicionar ou remover modalidades depois, pagando ou recebendo reembolso proporcional.
+      Cada modalidade tem turmas fixas, e o aluno precisa escolher um horário para cada turma que frequenta. Alguns alunos fazem musculação de forma livre, sem turma, mas para pilates e natação a presença em turma é obrigatória.
+      Há professores que lecionam em mais de uma modalidade. Uma modalidade pode ter mais de um professor, mas uma turma específica sempre é ministrada por apenas um professor.
+      Alunos podem pausar o plano por até 30 dias no ano, desde que avisem com antecedência mínima de 7 dias.
+    </p>
+    <div class="perguntas">
+      <p><b>4.1</b> Enumere as regras de negócio explícitas e inferidas:</p>
+      <textarea rows="2" id="resp-rn-4"></textarea>
+      <p><b>4.2</b> Quais ENTIDADES você criaria para este sistema?</p>
+      <input type="text" id="resp-ent-4" />
+    </div>
+    <!--button onclick="toggleGabarito('gab4')">Mostrar Resposta</button>
+    <div class="gabarito gabarito-hidden" id="gab4">
+      <strong>Regras explícitas</strong>
+      <ul>
+        <li>Plano pode incluir várias modalidades, aluno pode alterar depois.</li>
+        <li>Turmas obrigatórias em algumas modalidades (pilates, natação).</li>
+        <li>Uma turma = 1 professor, professor pode dar várias modalidades/turmas.</li>
+        <li>Pode pausar o plano por até 30 dias ao ano, avisando com antecedência.</li>
+      </ul>
+      <strong>Regras inferidas</strong>
+      <ul>
+        <li>Histórico de alterações de plano/modulo é importante (relacionamento temporal).</li>
+        <li>Cadastro e vínculo entre Professor-Modalidade é N:N; Turma-Professor é 1:1.</li>
+        <li>Controle separado para turmas ou uso livre (musculação), controle de pausa do plano.</li>
+      </ul>
+      <strong>Entidades sugeridas:</strong><br>
+      Aluno, Plano, Modalidade, Turma, Professor, PausaPlano, Pagamento/Reembolso, MatriculaModalidade, PresençaTurma
+    </div>
+  </div-->
+</div>
+  <!-- Exercício 5 -->
+<div class="bloco">
+  <h2>5. Plataforma de Assinatura de Revistas Digitais</h2>
+  <p>
+    A empresa oferece acesso a revistas digitais de diversas categorias. Um assinante pode ter várias assinaturas ativas. Assinaturas têm início, duração e status. Algumas revistas têm edições especiais vendidas separadamente. Edições podem ser avaliadas pelos usuários. Uma revista pode ter vários editores. 
+  </p>
+  <div class="perguntas">
+    <p><b>5.1</b> Enumere as regras de negócio explícitas e inferidas:</p>
+    <textarea rows="2" id="resp-rn-5"></textarea>
+    <p><b>5.2</b> Quais ENTIDADES você criaria?</p>
+    <input type="text" id="resp-ent-5" />
+  </div>
+  <!--button onclick="toggleGabarito('gab5')">Mostrar Resposta</button>
+  <div class="gabarito gabarito-hidden" id="gab5">
+    <strong>Regras Explícitas:</strong>
+    <ul>
+      <li>Uma revista pertence a uma categoria.</li>
+      <li>Um assinante pode ter várias assinaturas ativas.</li>
+      <li>Assinaturas possuem data de início, duração e status.</li>
+      <li>Algumas revistas têm edições especiais vendidas separadamente.</li>
+      <li>Edições podem ser avaliadas (nota + comentário).</li>
+      <li>Uma revista pode ter vários editores.</li>
+    </ul>
+    <strong>Regras Inferidas:</strong>
+    <ul>
+      <li>Um assinante não pode ter duas assinaturas ativas da mesma revista com a mesma data de início.</li>
+      <li>Uma edição pertence a uma única revista.</li>
+      <li>Só pode avaliar uma edição se tiver acesso a ela (por compra ou assinatura).</li>
+      <li>Um editor pode trabalhar em várias revistas.</li>
+    </ul>
+    <strong>Narrativa Didática:</strong><br>
+    O texto já traz várias relações explícitas, como “revista pertence a categoria” ou “assinante pode ter várias assinaturas”. Outras precisam de dedução, como impedir duplicidade de assinaturas ativas do mesmo tipo. Esse exercício de interpretação é central para uma modelagem de dados robusta e realista.
+    <br><strong>Entidades sugeridas:</strong> Revista, Assinante, Assinatura, Categoria, Edição, Avaliação, Editor
+  </div>
+</div-->
+</div>
+<!-- Exercício 6 -->
+<div class="bloco">
+  <h2>6. Rede de Franquias de Restaurantes</h2>
+  <p>
+    Cada franquia pertence a um franqueado e a uma cidade. Um prato pode estar em várias franquias, possuindo preços diferentes em cada local. Cada prato pertence a uma categoria. Clientes fazem pedidos que podem conter múltiplos pratos. Franquias registram fornecedores e os ingredientes recebidos.
+  </p>
+  <div class="perguntas">
+    <p><b>6.1</b> Enumere as regras de negócio explícitas e inferidas:</p>
+    <textarea rows="2" id="resp-rn-6"></textarea>
+    <p><b>6.2</b> Quais ENTIDADES você criaria?</p>
+    <input type="text" id="resp-ent-6" />
+  </div>
+  <!--button onclick="toggleGabarito('gab6')">Mostrar Resposta</button>
+  <div class="gabarito gabarito-hidden" id="gab6">
+    <strong>Regras Explícitas:</strong>
+    <ul>
+      <li>Cada franquia pertence a um franqueado e cidade.</li>
+      <li>Pratos podem estar em várias franquias, com preços diferentes.</li>
+      <li>Cada prato pertence a uma categoria.</li>
+      <li>Clientes fazem pedidos contendo múltiplos pratos.</li>
+      <li>Franquias registram fornecedores e ingredientes.</li>
+    </ul>
+    <strong>Regras Inferidas:</strong>
+    <ul>
+      <li>Relação prato-franquia é N:N — precisa tabela associativa com atributo (preço).</li>
+      <li>Franquia não existe sem franqueado e cidade.</li>
+      <li>Pedido pertence a uma franquia específica.</li>
+      <li>Ingredientes podem ser fornecidos por vários fornecedores e usados em vários pratos.</li>
+    </ul>
+    <strong>Narrativa Didática:</strong><br>
+    Este cenário ressalta relações associativas e dependências não tão óbvias. A observação sobre o preço do prato variar por franquia, ou sobre a associação dos ingredientes, mostra a importância do modelador enxergar além do texto – mapeando cada peculiaridade do negócio.
+    <br><strong>Entidades sugeridas:</strong> Franquia, Franqueado, Cidade, Prato, CategoriaPrato, Cliente, Pedido, Fornecedor, Ingrediente, PratoFranquia, PedidoPrato, FornecedorIngrediente
+  </div>
+</div-->
+</div>
+<!-- Exercício 7 -->
+<div class="bloco">
+  <h2>7. Plataforma de Cursos Online</h2>
+  <p>
+    Instrutores podem ministrar vários cursos, e cursos podem ter mais de um instrutor. Alunos se matriculam em cursos. Cada curso possui módulos e aulas. Algumas aulas têm materiais para download. Alunos avaliam cursos.
+  </p>
+  <div class="perguntas">
+    <p><b>7.1</b> Enumere as regras de negócio explícitas e inferidas:</p>
+    <textarea rows="2" id="resp-rn-7"></textarea>
+    <p><b>7.2</b> Quais ENTIDADES você criaria?</p>
+    <input type="text" id="resp-ent-7" />
+  </div>
+  <!--button onclick="toggleGabarito('gab7')">Mostrar Resposta</button>
+  <div class="gabarito gabarito-hidden" id="gab7">
+    <strong>Regras Explícitas:</strong>
+    <ul>
+      <li>Instrutores podem ministrar vários cursos e cursos ter vários instrutores.</li>
+      <li>Alunos se matriculam em cursos.</li>
+      <li>Cursos possuem módulos e aulas.</li>
+      <li>Algumas aulas possuem materiais para download.</li>
+      <li>Alunos avaliam cursos.</li>
+    </ul>
+    <strong>Regras Inferidas:</strong>
+    <ul>
+      <li>Certificados só são emitidos se atingir média mínima.</li>
+      <li>Aula pertence sempre a um módulo, que pertence a um curso.</li>
+      <li>Matrícula é vínculo aluno-curso e deve ter controle de status (ativa, trancada...)</li>
+      <li>Somente quem é aluno de um curso pode avaliá-lo.</li>
+    </ul>
+    <strong>Narrativa Didática:</strong><br>
+    Neste cenário, as relações N:N ficam evidentes (curso-instrutor, curso-aluno via matrícula). Também vemos a importância de registrar condicionais reais: certificado, avaliação, controle de status etc.
+    <br><strong>Entidades sugeridas:</strong> Curso, Instrutor, Aluno, Matrícula, Módulo, Aula, Material, Avaliação, Certificado
+  </div>
+</div-->
+</div>
+<!-- Exercício 8 -->
+<div class="bloco">
+  <h2>8. Sistema de Hospedagem de Imóveis</h2>
+  <p>
+    Anfitriões podem cadastrar vários imóveis, que possuem endereço e tipo. Hóspedes podem reservar imóveis para um período e pagar o valor correspondente. Um imóvel pode ter várias fotos. Hóspedes podem avaliar a hospedagem.
+  </p>
+  <div class="perguntas">
+    <p><b>8.1</b> Enumere as regras de negócio explícitas e inferidas:</p>
+    <textarea rows="2" id="resp-rn-8"></textarea>
+    <p><b>8.2</b> Quais ENTIDADES você criaria?</p>
+    <input type="text" id="resp-ent-8" />
+  </div>
+  <!--button onclick="toggleGabarito('gab8')">Mostrar Resposta</button>
+  <div class="gabarito gabarito-hidden" id="gab8">
+    <strong>Regras Explícitas:</strong>
+    <ul>
+      <li>Anfitrião pode cadastrar vários imóveis, que possuem endereço e tipo.</li>
+      <li>Hóspedes podem reservar imóveis para um período e pagar um valor.</li>
+      <li>Imóveis podem ter várias fotos.</li>
+      <li>Hóspedes podem avaliar a estadia.</li>
+    </ul>
+    <strong>Regras Inferidas:</strong>
+    <ul>
+      <li>Reserva pertence a um único imóvel e um único hóspede.</li>
+      <li>A taxa da plataforma é calculada por reserva.</li>
+      <li>Só pode avaliar depois da estadia (aval vinculado à reserva).</li>
+      <li>Imóvel só existe com anfitrião vinculado.</li>
+    </ul>
+    <strong>Narrativa Didática:</strong><br>
+    A modelagem correta depende de distinguir o que é entidade, o que é relacionamento e o que é restrição/condição. Esse exemplo força o raciocínio: uma avaliação, por exemplo, só existe se houve uma reserva, o que não está explícito no texto, mas é fundamental no banco de dados.
+    <br><strong>Entidades sugeridas:</strong> Anfitrião, Imóvel, Endereço, TipoImovel, Hóspede, Reserva, FotoImovel, Avaliação, TaxaReserva
+  </div>
+</div-->
+</div>
+</main>
+<script>
+  function toggleGabarito(id) {
+    const el = document.getElementById(id);
+    el.classList.toggle('gabarito-hidden');
+  }
+</script>
+</body>
+</html>
